@@ -1,0 +1,27 @@
+#r studio patterns
+install.packages("arules")
+library(arules)
+g <- read.transactions("G.csv", sep = ",")
+summary(g)
+inspect((g[1:5]))
+itemFrequency(g[1:19])
+#Support=0.05 means include securities that were in at least 5% of the 1500 transactions.
+itemFrequencyPlot(g, support=0.05)
+itemFrequencyPlot(g, topN=10)
+image(g[1:5])
+sample(1:10, 5)
+#How about at random – 100 transactions?
+image(g[sample(1:1500, 100)])
+apriori(g)
+grules <- apriori(g, parameter = list(support=0.2, confidence=0.85, minlen=4))
+grules
+inspect(grules[1:5])
+summary(grules)
+inspect(sort(grules,by="lift")[1:40])
+EArules <- subset(grules, items %in% "EA")
+inspect(EArules)
+DArules <- subset(grules, items %in% "DA")
+inspect(DArules)
+write(grules,file = "grules.csv",sep=",", quote=TRUE, row.names=FALSE)
+grules_df <- as(grules, "data.frame")
+str(grules_df)
